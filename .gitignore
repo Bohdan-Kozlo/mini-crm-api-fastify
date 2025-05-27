@@ -4,11 +4,17 @@ logs
 *.log
 npm-debug.log*
 
+prisma/migrations
+
+generated
+
 jspm_packages/
 
 *.tsbuildinfo
 
 .env
+
+tasks.md
 
 .vscode/
 .idea/
@@ -18,3 +24,4 @@ dist/
 
 .DS_Store
 Thumbs.db
+/generated/prisma
