@@ -117,7 +117,7 @@ async function refreshTokens(refreshToken: string, server: FastifyInstance) {
                 role: user.role
             }
         };
-    } catch (error) {
+    } catch {
         throw new Error("Invalid refresh token");
     }
 }
@@ -148,7 +148,6 @@ async function generateTokens(userId: string, userRole: Role, server: FastifyIns
         { id: userId, role: userRole },
     );
     
-    // Генеруємо refresh token (довгий термін дії)
     const refreshToken = server.jwt.sign(
         { id: userId, role: userRole },
         { expiresIn: '7d' }

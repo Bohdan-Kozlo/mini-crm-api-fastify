@@ -7,6 +7,7 @@ import {
     serializerCompiler,
     validatorCompiler,
 } from 'fastify-type-provider-zod'
+import fastifyJwt from '@fastify/jwt'
 
 const server = Fastify({ logger: loggerConfig }).withTypeProvider();
 
@@ -19,6 +20,7 @@ server.get(
 
 async function main() {
     await server.register(prismaPlugin)
+    server.register(fastifyJwt, {secret: 'secret'})
     
     server.setValidatorCompiler(validatorCompiler);
     server.setSerializerCompiler(serializerCompiler);

@@ -59,17 +59,6 @@ export const authResponseSchema = z.object({
   }),
 });
 
-// Функція для створення посилань на схеми
-export const $ref = (schema: keyof typeof schemas) => ({ $ref: schema });
-
-// Схеми для використання в маршрутах
-export const schemas = {
-  registerUserSchema: registerUserSchema.shape.body,
-  loginUserSchema: loginUserSchema.shape.body,
-  refreshTokenSchema: refreshTokenSchema.shape.body,
-  authResponseSchema,
-};
-
 export type RegisterUserInput = z.infer<typeof registerUserSchema>['body'];
 export type LoginUserInput = z.infer<typeof loginUserSchema>['body'];
 export type RefreshTokenInput = z.infer<typeof refreshTokenSchema>['body'];

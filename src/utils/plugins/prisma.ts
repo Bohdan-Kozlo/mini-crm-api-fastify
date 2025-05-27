@@ -2,12 +2,6 @@ import { FastifyInstance, FastifyPluginAsync } from 'fastify';
 import { PrismaClient } from '@prisma/client';
 import fp from 'fastify-plugin';
 
-declare module 'fastify' {
-    interface FastifyInstance {
-      prisma: PrismaClient;
-    }
-}
-
 
 const prismaPlugin: FastifyPluginAsync = async (fastify: FastifyInstance) => {
   const prisma = new PrismaClient();
