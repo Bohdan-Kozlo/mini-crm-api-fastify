@@ -1,0 +1,82 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(ulid())
+  name String @unique
+  email String @unique
+  password String
+  refreshToken String?
+  role Role @default(MANAGER)
+  clients Client[]
+  deals Deal[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum Role {
+  ADMIN
+  MANAGER
+}
+
+model Client {
+  id String @id @default(ulid())
+  name String @unique
+  industry String
+  ownerId String
+  owner User @relation(fields: [ownerId], references: [id])
+  contacts Contact[]
+  deals Deal[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Contact {
+  id String @id @default(ulid())
+  name String @unique
+  email String @unique
+  phone String @unique
+  clientId String
+  client Client @relation(fields: [clientId], references: [id])
+}
+
+model Deal {
+  id String @id @default(ulid())
+  title String
+  value Decimal @db.Decimal
+  status Status @default(OPEN)
+  clientId String
+  client Client @relation(fields: [clientId], references: [id])
+  ownerId String
+  owner User @relation(fields: [ownerId], references: [id])
+  notes Note[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum Status {
+  OPEN
+  CLOSED
+  WON
+  LOST
+}
+
+model Note {
+  id String @id @default(ulid())
+  content String
+  createdAt DateTime @default(now())
+  dealId String
+  deal Deal @relation(fields: [dealId], references: [id])
+}
