@@ -11,7 +11,7 @@ export async function registerHandler(
     return reply.code(201).send(result);
   } catch (error) {
     request.server.log.error(error);
-    return reply.code(400).send({ message: error instanceof Error ? error.message : 'An unknown error occurred' });
+    return reply.code(401).send({ message: error instanceof Error ? error.message : 'An unknown error occurred' });
   }
 }
 
@@ -52,6 +52,6 @@ export async function logoutHandler(
     return reply.send(result);
   } catch (error) {
     request.server.log.error(error);
-    return reply.code(400).send({ message: error instanceof Error ? error.message : 'An unknown error occurred' });
+    return reply.code(401).send({ message: error instanceof Error ? error.message : 'An unknown error occurred' });
   }
 }

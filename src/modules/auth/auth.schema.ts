@@ -62,4 +62,9 @@ export const authResponseSchema = z.object({
 export type RegisterUserInput = z.infer<typeof registerUserSchema>['body'];
 export type LoginUserInput = z.infer<typeof loginUserSchema>['body'];
 export type RefreshTokenInput = z.infer<typeof refreshTokenSchema>['body'];
+export const logoutResponseSchema = z.object({
+    success: z.boolean()
+});
+
 export type AuthResponse = z.infer<typeof authResponseSchema>;
+export type LogoutResponse = z.infer<typeof logoutResponseSchema>;

@@ -21,8 +21,9 @@ export async function buildServer() {
     server.decorate('authenticate', async (request: FastifyRequest, reply: FastifyReply) => {
         try {
             await request.jwtVerify()
+            return
         } catch (err) {
-            reply.send(err)
+            return reply.code(401).send(err)
         }
     })
 

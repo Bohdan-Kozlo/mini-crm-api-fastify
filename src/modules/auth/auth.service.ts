@@ -94,9 +94,10 @@ async function refreshTokens(refreshToken: string, server: FastifyInstance) {
     }
     
     try {
-        const decoded = server.jwt.verify<{ id: string, role: Role }>(refreshToken);
+        await server.jwt.verify(refreshToken);
+        const decoded = server.jwt.decode<{ id: string, role: Role }>(refreshToken);
         
-        if (decoded.id !== user.id) {
+        if (!decoded || decoded.id !== user.id) {
             throw new Error("Invalid refresh token");
         }
         
@@ -127,20 +128,31 @@ async function logout(refreshToken: string, server: FastifyInstance) {
         throw new Error("Refresh token is required");
     }
     
-    const user = await server.prisma.user.findFirst({
-        where: { refreshToken }
-    });
-    
-    if (!user) {
+    try {
+        await server.jwt.verify(refreshToken);
+        const decoded = server.jwt.decode<{ id: string, role: Role }>(refreshToken);
+        console.log(decoded);
+        if (!decoded) {
+            throw new Error("Invalid refresh token");
+        }
+        
+        const user = await server.prisma.user.findFirst({
+            where: { refreshToken }
+        });
+        console.log(user);
+        if (!user || user.id !== decoded.id) {
+            throw new Error("Invalid refresh token");
+        }
+        
+        await server.prisma.user.update({
+            where: { id: user.id },
+            data: { refreshToken: null }
+        });
+        
         return { success: true };
+    } catch {
+        throw new Error("Invalid refresh token");
     }
-    
-    await server.prisma.user.update({
-        where: { id: user.id },
-        data: { refreshToken: null }
-    });
-    
-    return { success: true };
 }
 
 async function generateTokens(userId: string, userRole: Role, server: FastifyInstance) {
