@@ -35,8 +35,8 @@ model Client {
   id String @id @default(ulid())
   name String @unique
   industry String
-  ownerId String
-  owner User @relation(fields: [ownerId], references: [id])
+  ownerId String?
+  owner User? @relation(fields: [ownerId], references: [id], onDelete: SetNull, onUpdate: Cascade)
   contacts Contact[]
   deals Deal[]
   createdAt DateTime @default(now())
@@ -48,8 +48,8 @@ model Contact {
   name String @unique
   email String @unique
   phone String @unique
-  clientId String
-  client Client @relation(fields: [clientId], references: [id])
+  clientId String?
+  client Client? @relation(fields: [clientId], references: [id], onDelete: SetNull, onUpdate: Cascade)
 }
 
 model Deal {
@@ -57,10 +57,10 @@ model Deal {
   title String
   value Decimal @db.Decimal
   status Status @default(OPEN)
-  clientId String
-  client Client @relation(fields: [clientId], references: [id])
-  ownerId String
-  owner User @relation(fields: [ownerId], references: [id])
+  clientId String?
+  client Client? @relation(fields: [clientId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  ownerId String?
+  owner User? @relation(fields: [ownerId], references: [id], onDelete: SetNull, onUpdate: Cascade)
   notes Note[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -78,5 +78,5 @@ model Note {
   content String
   createdAt DateTime @default(now())
   dealId String
-  deal Deal @relation(fields: [dealId], references: [id])
+  deal Deal @relation(fields: [dealId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
