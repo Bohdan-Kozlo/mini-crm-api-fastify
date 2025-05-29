@@ -8,6 +8,7 @@ import {
     validatorCompiler,
 } from 'fastify-type-provider-zod'
 import fastifyJwt from '@fastify/jwt'
+import clientRoutes from './modules/client/client.route'
 
 export async function buildServer() {
     const server = Fastify({ logger: loggerConfig }).withTypeProvider();
@@ -29,6 +30,7 @@ export async function buildServer() {
 
     server.register(userRoutes, { prefix: 'api/users' })
     server.register(authRoutes, { prefix: 'api/auth' })
+    server.register(clientRoutes, { prefix: 'api/clients' })
 
     server.get(
         '/healthcheck',
