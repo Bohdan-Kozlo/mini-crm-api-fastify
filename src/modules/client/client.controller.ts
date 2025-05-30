@@ -29,8 +29,11 @@ export async function updateClientHandler(
       request.server,
     );
     return reply.code(200).send(client);
-  } catch (error) {
+  } catch (error: unknown) {
     request.log.error(error, 'Error updating client');
+    if (error instanceof Error && error.message === 'Client not found or access denied') {
+      return reply.code(404).send({ message: error.message });
+    }
     return reply.code(400).send({ message: 'Error updating client' });
   }
 }
@@ -42,8 +45,11 @@ export async function deleteClientHandler(
   try {
     await clientDelete(request.params, request.user.id ,request.server);
     return reply.code(204).send();
-  } catch (error) {
+  } catch (error: unknown) {
     request.log.error(error, 'Error deleting client');
+    if (error instanceof Error && error.message === 'Client not found or access denied') {
+      return reply.code(404).send({ message: error.message });
+    }
     return reply.code(400).send({ message: 'Error deleting client' });
   }
 }

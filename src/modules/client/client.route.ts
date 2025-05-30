@@ -13,6 +13,8 @@ import {
   clientsResponseSchema,
   ClientCreateInput,
   ClientUpdateInput,
+  querySchema,
+  paramsSchema
 } from './client.schema';
 
 async function clientRoutes(server: FastifyInstance) {
@@ -51,13 +53,7 @@ async function clientRoutes(server: FastifyInstance) {
     '/search',
     {
       schema: {
-        querystring: {
-          type: 'object',
-          properties: {
-            query: { type: 'string' },
-          },
-          required: ['query'],
-        },
+        querystring: querySchema,
         response: {
           200: clientsResponseSchema,
         },
@@ -75,16 +71,7 @@ async function clientRoutes(server: FastifyInstance) {
     {
       schema: {
         body: clientUpdateSchema.shape.body,
-        params: {
-          type: 'object',
-          properties: {
-            id: { type: 'string' },
-          },
-          required: ['id'],
-        },
-        response: {
-          200: clientResponseSchema,
-        },
+        params: paramsSchema,
       },
       preHandler: [server.authenticate],
     },
@@ -97,18 +84,7 @@ async function clientRoutes(server: FastifyInstance) {
     '/:id',
     {
       schema: {
-        params: {
-          type: 'object',
-          properties: {
-            id: { type: 'string' },
-          },
-          required: ['id'],
-        },
-        response: {
-          204: {
-            type: 'null',
-          },
-        },
+        params: paramsSchema,
       },
       preHandler: [server.authenticate],
     },

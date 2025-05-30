@@ -41,6 +41,14 @@ export const clientResponseSchema = z.object({
   updatedAt: z.string().or(z.date()),
 });
 
+export const querySchema = z.object({
+  query: z.string().min(1, 'Query is required'),
+});
+
+export const paramsSchema = z.object({
+  id: z.string().min(1, 'Id is required'),
+});
+
 export const clientsResponseSchema = z.array(clientResponseSchema);
 
 export type ClientCreateInput = z.infer<typeof clientCreateSchema>['body'];

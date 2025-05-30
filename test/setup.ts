@@ -14,9 +14,6 @@ beforeAll(async () => {
   global.server = await buildServer();
 });
 
-beforeEach(async () => {
-  await global.prisma.user.deleteMany();
-});
 
 afterAll(async () => {
   await global.prisma.$disconnect();
