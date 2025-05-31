@@ -81,3 +81,23 @@ export async function searchDealsHandler(
     return reply.code(400).send({ message: 'Error searching deals' });
   }
 }
+
+export async function updateDealStatusHandler(
+  request: FastifyRequest<{ Params: { id: string }; Body: { status: 'OPEN' | 'CLOSED' | 'WON' | 'LOST' } }>,
+  reply: FastifyReply,
+) {
+  try {
+    const deal = await dealUpdate(
+      { id: request.params.id, status: request.body.status },
+      request.user.id,
+      request.server,
+    );
+    return reply.code(200).send(deal);
+  } catch (error: unknown) {
+    request.log.error(error, 'Error updating deal status');
+    if (error instanceof Error && error.message === 'Deal not found or access denied') {
+      return reply.code(404).send({ message: error.message });
+    }
+    return reply.code(400).send({ message: 'Error updating deal status' });
+  }
+}

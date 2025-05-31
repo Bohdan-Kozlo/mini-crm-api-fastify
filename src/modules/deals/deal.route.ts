@@ -1,10 +1,12 @@
 import { FastifyInstance } from 'fastify';
+import { z } from 'zod';
 import {
   createDealHandler,
   deleteDealHandler,
   getDealsHandler,
   searchDealsHandler,
   updateDealHandler,
+  updateDealStatusHandler,
 } from './deal.controller';
 import {
   dealCreateSchema,
@@ -85,6 +87,22 @@ async function dealRoutes(server: FastifyInstance) {
     },
     deleteDealHandler,
   );
+
+  server.patch<{ Params: { id: string }; Body: { status: 'OPEN' | 'CLOSED' | 'WON' | 'LOST' } }>(
+    '/:id/status',
+    {
+      schema: {
+        params: paramsSchema,
+        body: z.object({ status: z.enum(['OPEN', 'CLOSED', 'WON', 'LOST']) }),
+        response: {
+          200: dealResponseSchema,
+        },
+      },
+      preHandler: [server.authenticate],
+    },
+    updateDealStatusHandler,
+  );
 }
+
 
 export default dealRoutes;
