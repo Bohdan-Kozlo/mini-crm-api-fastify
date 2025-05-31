@@ -11,6 +11,8 @@ import fastifyJwt from '@fastify/jwt'
 import clientRoutes from './modules/client/client.route'
 import dealRoutes from './modules/deals/deal.route'
 import noteRoutes from './modules/note/note.route'
+import { Role } from '@prisma/client'
+
 
 export async function buildServer() {
     const server = Fastify({ logger: loggerConfig }).withTypeProvider();
@@ -29,6 +31,16 @@ export async function buildServer() {
             return reply.code(401).send(err)
         }
     })
+
+    server.decorate('authorizeAdmin', async (request: FastifyRequest, reply: FastifyReply) => {
+        try {
+            if (request.user.role !== Role.ADMIN) {
+                return reply.code(403).send({ message: 'Forbidden: Only admins can access this resource' });
+            }
+        } catch (err) {
+            return reply.code(403).send(err);
+        }
+    });
 
     server.register(userRoutes, { prefix: 'api/users' })
     server.register(authRoutes, { prefix: 'api/auth' })
