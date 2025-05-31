@@ -8,6 +8,7 @@ prisma/migrations
 
 generated
 
+coverage
 jspm_packages/
 
 *.tsbuildinfo

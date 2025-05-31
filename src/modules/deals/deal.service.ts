@@ -3,11 +3,12 @@ import { DealCreateInput, DealUpdateInput, DealDeleteInput } from './deal.schema
 import { Status } from '@prisma/client';
 
 export async function dealCreate(input: DealCreateInput, userId: string, server: FastifyInstance) {
+
   const deal = await server.prisma.deal.create({
     data: {
       ...input,
       ownerId: userId,
-      status: Status.OPEN, // Default status for new deals
+      status: Status.OPEN,
     },
     include: {
       client: true,

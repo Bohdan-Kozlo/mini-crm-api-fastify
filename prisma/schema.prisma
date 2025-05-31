@@ -75,6 +75,7 @@ enum Status {
 
 model Note {
   id String @id @default(ulid())
+  title String
   content String
   createdAt DateTime @default(now())
   dealId String

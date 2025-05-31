@@ -10,6 +10,7 @@ import {
 import fastifyJwt from '@fastify/jwt'
 import clientRoutes from './modules/client/client.route'
 import dealRoutes from './modules/deals/deal.route'
+import noteRoutes from './modules/note/note.route'
 
 export async function buildServer() {
     const server = Fastify({ logger: loggerConfig }).withTypeProvider();
@@ -33,6 +34,7 @@ export async function buildServer() {
     server.register(authRoutes, { prefix: 'api/auth' })
     server.register(clientRoutes, { prefix: 'api/clients' })
     server.register(dealRoutes, { prefix: 'api/deals' })
+    server.register(noteRoutes, { prefix: 'api' })
 
     server.get(
         '/healthcheck',
