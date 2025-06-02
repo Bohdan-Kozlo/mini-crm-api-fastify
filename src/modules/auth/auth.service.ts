@@ -11,13 +11,13 @@ async function login(loginInput: LoginUserInput, server: FastifyInstance) {
     });
     
     if (!user) {
-        throw new Error("Invalid email or password");
+        throw server.httpErrors.unauthorized("Invalid email or password");
     }
     
     const isPasswordValid = await bcrypt.compare(password, user.password);
     
     if (!isPasswordValid) {
-        throw new Error("Invalid email or password");
+        throw server.httpErrors.unauthorized("Invalid email or password");
     }
     
     const tokens = await generateTokens(user.id, user.role, server);
@@ -47,7 +47,7 @@ async function register(registerUserInput: RegisterUserInput, server: FastifyIns
     });
     
     if (existingUser) {
-        throw new Error("User with this email already exists");
+        throw server.httpErrors.unauthorized("User with this email already exists");
     }
     
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -82,7 +82,7 @@ async function register(registerUserInput: RegisterUserInput, server: FastifyIns
 
 async function refreshTokens(refreshToken: string, server: FastifyInstance) {
     if (!refreshToken) {
-        throw new Error("Refresh token is required");
+        throw server.httpErrors.badRequest("Refresh token is required");
     }
     
     const user = await server.prisma.user.findFirst({
@@ -90,7 +90,7 @@ async function refreshTokens(refreshToken: string, server: FastifyInstance) {
     });
     
     if (!user) {
-        throw new Error("Invalid refresh token");
+        throw server.httpErrors.unauthorized("Invalid refresh token");
     }
     
     try {
@@ -98,7 +98,7 @@ async function refreshTokens(refreshToken: string, server: FastifyInstance) {
         const decoded = server.jwt.decode<{ id: string, role: Role }>(refreshToken);
         
         if (!decoded || decoded.id !== user.id) {
-            throw new Error("Invalid refresh token");
+            throw server.httpErrors.unauthorized("Invalid refresh token");
         }
         
         const tokens = await generateTokens(user.id, user.role, server);
@@ -119,13 +119,13 @@ async function refreshTokens(refreshToken: string, server: FastifyInstance) {
             }
         };
     } catch {
-        throw new Error("Invalid refresh token");
+        throw server.httpErrors.unauthorized("Invalid refresh token");
     }
 }
 
 async function logout(refreshToken: string, server: FastifyInstance) {
     if (!refreshToken) {
-        throw new Error("Refresh token is required");
+        throw server.httpErrors.badRequest("Refresh token is required");
     }
     
     try {
@@ -133,7 +133,7 @@ async function logout(refreshToken: string, server: FastifyInstance) {
         const decoded = server.jwt.decode<{ id: string, role: Role }>(refreshToken);
         console.log(decoded);
         if (!decoded) {
-            throw new Error("Invalid refresh token");
+            throw server.httpErrors.unauthorized("Invalid refresh token");
         }
         
         const user = await server.prisma.user.findFirst({
@@ -141,7 +141,7 @@ async function logout(refreshToken: string, server: FastifyInstance) {
         });
         console.log(user);
         if (!user || user.id !== decoded.id) {
-            throw new Error("Invalid refresh token");
+            throw server.httpErrors.unauthorized("Invalid refresh token");
         }
         
         await server.prisma.user.update({
@@ -151,7 +151,7 @@ async function logout(refreshToken: string, server: FastifyInstance) {
         
         return { success: true };
     } catch {
-        throw new Error("Invalid refresh token");
+        throw server.httpErrors.unauthorized("Invalid refresh token");
     }
 }
 

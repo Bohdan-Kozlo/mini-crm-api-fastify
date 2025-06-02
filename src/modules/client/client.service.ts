@@ -28,7 +28,7 @@ export async function clientUpdate(
   });
 
   if (!existingClient) {
-    throw new Error('Client not found or access denied');
+    throw server.httpErrors.notFound('Client not found or access denied');
   }
 
   const client = await server.prisma.client.update({
@@ -56,7 +56,7 @@ export async function clientDelete(input: ClientDeleteInput, userId: string ,ser
   });
 
   if (!existingClient) {
-    throw new Error('Client not found or access denied');
+    throw server.httpErrors.notFound('Client not found or access denied');
   }
 
   await server.prisma.client.delete({

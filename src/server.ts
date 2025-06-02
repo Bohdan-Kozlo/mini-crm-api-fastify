@@ -12,13 +12,26 @@ import clientRoutes from './modules/client/client.route'
 import dealRoutes from './modules/deals/deal.route'
 import noteRoutes from './modules/note/note.route'
 import { Role } from '@prisma/client'
+import sansible from '@fastify/sensible'
+import errorHandlerPlugin from './utils/plugins/errorHandler'
+import cors from '@fastify/cors'
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 
 export async function buildServer() {
     const server = Fastify({ logger: loggerConfig }).withTypeProvider();
 
+    await server.register(cors, {
+        origin: '*',
+        methods: ['GET', 'POST', 'PUT', 'DELETE'],
+        credentials: true,
+      });
     await server.register(prismaPlugin)
-    server.register(fastifyJwt, { secret: 'secret' })
+    await server.register(sansible)
+    await server.register(errorHandlerPlugin)
+    server.register(fastifyJwt, { secret: process.env.JWT_SECRET as string  })
     
     server.setValidatorCompiler(validatorCompiler);
     server.setSerializerCompiler(serializerCompiler);

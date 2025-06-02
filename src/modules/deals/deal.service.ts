@@ -32,7 +32,7 @@ export async function dealUpdate(
   });
 
   if (!existingDeal) {
-    throw new Error('Deal not found or access denied');
+    throw server.httpErrors.notFound('Deal not found or access denied');
   }
 
   const deal = await server.prisma.deal.update({
@@ -63,7 +63,7 @@ export async function dealDelete(input: DealDeleteInput, userId: string ,server:
   });
 
   if (!existingDeal) {
-    throw new Error('Deal not found or access denied');
+    throw server.httpErrors.notFound('Deal not found or access denied');
   }
 
   await server.prisma.deal.delete({

@@ -10,7 +10,7 @@ export async function createNote(input: NoteCreateInput ,server: FastifyInstance
     });
 
     if (!deal) {
-        throw new Error('Deal not found');
+        throw server.httpErrors.notFound('Deal not found');
     }
 
     return await server.prisma.note.create({
@@ -34,7 +34,7 @@ export async  function getNotesByDealId(dealId: string, server: FastifyInstance)
     });
 
     if (!deal) {
-        throw new Error('Deal not found');
+        throw server.httpErrors.notFound('Deal not found');
     }
 
     const notes = await server.prisma.note.findMany({
@@ -44,7 +44,7 @@ export async  function getNotesByDealId(dealId: string, server: FastifyInstance)
     });
 
     if (!notes) {
-        throw new Error('Notes not found');
+        throw server.httpErrors.notFound('Notes not found');
     }
 
     return notes;
